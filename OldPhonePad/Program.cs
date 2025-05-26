@@ -1,14 +1,21 @@
 ﻿using OldPhonePad.Services;
 
-Console.WriteLine("Enter input:");
-string? input = Console.ReadLine();
+try
+{
+    Console.WriteLine("Enter input:");
+    string? input = Console.ReadLine();
 
-if (!string.IsNullOrWhiteSpace(input))
-{
-    string result = OldPhonePadConverter.Convert(input);
-    Console.WriteLine($"Output: {result}");
+    if (!string.IsNullOrWhiteSpace(input))
+    {
+        string result = OldPhonePadConverter.Convert(input);
+        Console.WriteLine($"Output: {result}");
+    }
+    else
+    {
+        Console.WriteLine("No input provided.");
+    }
 }
-else
+catch (InvalidOperationException ex)
 {
-    Console.WriteLine("No input provided.");
+    Console.WriteLine($"Error: {ex.Message}");
 }

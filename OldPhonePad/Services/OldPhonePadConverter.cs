@@ -20,44 +20,55 @@ public static class OldPhonePadConverter
 
     public static string Convert(string input)
     {
-        if (string.IsNullOrWhiteSpace(input)) return "";
+        if (string.IsNullOrWhiteSpace(input))
+            return string.Empty;
 
-        var output = new List<char>();
-        var current = new StringBuilder();
-
-        foreach (char c in input)
+        try
         {
-            if (c == '#') break;
+            var output = new List<char>();
+            var current = new StringBuilder();
 
-            if (c == '*')
+            foreach (char c in input)
             {
-                AddCurrentToOutput(current, output);
-                current.Clear();
+                if (!char.IsDigit(c) && c != '*' && c != '#' && c != ' ')
+                    throw new InvalidOperationException($"Invalid character '{c}' in input.");
 
-                if (output.Count > 0)
-                    output.RemoveAt(output.Count - 1);
+                if (c == '#') break;
 
-                continue;
+                if (c == '*')
+                {
+                    AddCurrentToOutput(current, output);
+                    current.Clear();
+
+                    if (output.Count > 0)
+                        output.RemoveAt(output.Count - 1);
+
+                    continue;
+                }
+
+                if (c == ' ')
+                {
+                    AddCurrentToOutput(current, output);
+                    current.Clear();
+                    continue;
+                }
+
+                if (current.Length > 0 && current[0] != c)
+                {
+                    AddCurrentToOutput(current, output);
+                    current.Clear();
+                }
+
+                current.Append(c);
             }
 
-            if (c == ' ')
-            {
-                AddCurrentToOutput(current, output);
-                current.Clear();
-                continue;
-            }
-
-            if (current.Length > 0 && current[0] != c)
-            {
-                AddCurrentToOutput(current, output);
-                current.Clear();
-            }
-
-            current.Append(c);
+            AddCurrentToOutput(current, output);
+            return new string(output.ToArray());
         }
-
-        AddCurrentToOutput(current, output);
-        return new string(output.ToArray());
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException("Failed to convert input string due to invalid format or unexpected error.", ex);
+        }
     }
 
     private static void AddCurrentToOutput(StringBuilder current, List<char> output)
