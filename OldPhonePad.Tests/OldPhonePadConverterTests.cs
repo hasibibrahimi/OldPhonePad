@@ -17,6 +17,15 @@ public class OldPhonePadConverterTests
     }
 
     [Fact]
+    public void Convert_WithInvalidCharacter_Throws()
+    {
+        var ex = Assert.Throws<InvalidOperationException>(() =>
+            OldPhonePadConverter.Convert("23@4#"));
+
+        Assert.Contains("Failed to convert input string due to invalid format or unexpected error", ex.Message);
+    }
+
+    [Fact]
     public void Convert_EmptyInput_ReturnsEmpty()
     {
         var result = OldPhonePadConverter.Convert("");
